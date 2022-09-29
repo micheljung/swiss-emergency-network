@@ -30,6 +30,9 @@ jobs:
           sketch-paths: |
             - ./src
           libraries: |
+            - source-url: https://github.com/Call-for-Code/ClusterDuck-Protocol.git
+            - source-url: https://github.com/contrem/arduino-timer.git
+            - name: radiolib@4.5.0
             - source-path: ./lib/AXP202X_Library
             - source-path: ./lib/Adafruit_BMP085_Unified
             - source-path: ./lib/Adafruit_BMP280_Library
