@@ -10,12 +10,17 @@ env:
 jobs:
   compile:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fqbn:
+          - "Heltec-esp32:esp32"
     steps:
       - uses: actions/checkout@v2
 
       - uses: arduino/compile-sketches@v1
         with:
           cli-version: 0.27.1
+          fqbn: ${{ matrix.fqbn }}
           platforms: |
             - name: "Heltec-esp32:esp32"
               version: "0.0.6"
