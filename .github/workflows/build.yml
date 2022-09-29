@@ -1,0 +1,78 @@
+name: Build
+
+on:
+  - push
+  - pull_request
+
+env:
+  SKETCHES_REPORTS_PATH: sketches-reports
+  SKETCHES_REPORTS_ARTIFACT_NAME: sketches-reports
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fqbn:
+          - "arduino:avr:uno"
+          - "arduino:samd:mkrzero"
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: arduino/compile-sketches@v1
+        with:
+          cli-version: 0.27.1
+          fqbn: ${{ matrix.fqbn }}
+          platforms: |
+            - name: "Heltec-esp32:esp32"
+              version: "0.0.6"
+              source-url: https://resource.heltec.cn/download/package_heltec_esp32_index.json
+          enable-deltas-report: true
+          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
+          sketch-paths: |
+            - ./src
+          libraries: |
+            - source-path: ./lib/AXP202X_Library
+            - source-path: ./lib/Adafruit_BMP085_Unified
+            - source-path: ./lib/Adafruit_BMP280_Library
+            - source-path: ./lib/Adafruit_BusIO
+            - source-path: ./lib/Adafruit_Sensor
+            - source-path: ./lib/ArduinoJson
+            - source-path: ./lib/AsyncTCP
+            - source-path: ./lib/CRC32
+            - source-path: ./lib/Crypto
+            - source-path: ./lib/DHT-sensor-library
+            - source-path: ./lib/ESPAsyncTCP
+            - source-path: ./lib/ESPAsyncWebServer
+            - source-path: ./lib/FastLED
+            - source-path: ./lib/GP2YDustSensor
+            - source-path: ./lib/MQSensorsLib
+            - source-path: ./lib/RadioLib
+            - source-path: ./lib/TinyGPSPlus
+            - source-path: ./lib/U8g2_Arduino
+            - source-path: ./lib/arduino-timer
+            - source-path: ./lib/esp8266-oled-ssd1306
+            - source-path: ./lib/pubsubclient
+
+      # This step is needed to pass the size data to the report job 
+      - name: Upload sketches report to workflow artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
+          path: ${{ env.SKETCHES_REPORTS_PATH }}
+
+  # When using a matrix to compile for multiple boards, it's necessary to use a separate job for the deltas report
+  report:
+    needs: compile  # Wait for the compile job to finish to get the data for the report
+    if: github.event_name == 'pull_request' # Only run the job when the workflow is triggered by a pull request
+    runs-on: ubuntu-latest
+    steps:
+      # This step is needed to get the size data produced by the compile jobs
+      - name: Download sketches reports artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
+          path: ${{ env.SKETCHES_REPORTS_PATH }}
+
+      - uses: arduino/report-size-deltas@v1
+        with:
+          sketches-reports-source: ${{ env.SKETCHES_REPORTS_PATH }}
