@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         fqbn:
-          - "Heltec-esp32:esp32"
+          - "Heltec-esp32:esp32:wifi_lora_32_V2"
     steps:
       - uses: actions/checkout@v2
 
