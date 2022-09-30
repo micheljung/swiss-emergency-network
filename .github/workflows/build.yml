@@ -16,6 +16,8 @@ jobs:
           - "Heltec-esp32:esp32:wifi_lora_32_V2"
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - uses: arduino/compile-sketches@v1
         with:
