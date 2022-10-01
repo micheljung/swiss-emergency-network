@@ -61,3 +61,6 @@
 [submodule "lib/pubsubclient"]
 	path = lib/pubsubclient
 	url = https://github.com/knolleary/pubsubclient
+[submodule "lib/ClusterDuck-Protocol"]
+	path = lib/ClusterDuck-Protocol
+	url = https://github.com/Call-for-Code/ClusterDuck-Protocol.git
