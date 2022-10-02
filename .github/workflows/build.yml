@@ -63,6 +63,12 @@ jobs:
           name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
           path: ${{ env.SKETCHES_REPORTS_PATH }}
 
+      - name: Upload bin
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./build
+          if-no-files-found: error
+
   # When using a matrix to compile for multiple boards, it's necessary to use a separate job for the deltas report
   report:
     needs: compile  # Wait for the compile job to finish to get the data for the report
