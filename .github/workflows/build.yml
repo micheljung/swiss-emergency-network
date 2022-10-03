@@ -70,7 +70,7 @@ jobs:
       - name: Upload bin
         uses: actions/upload-artifact@v3
         with:
-          path: ./bin
+          path: ./build/bin
           if-no-files-found: error
 
   # When using a matrix to compile for multiple boards, it's necessary to use a separate job for the deltas report
