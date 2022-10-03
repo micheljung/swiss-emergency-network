@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 fqbn="Heltec-esp32:esp32:wifi_lora_32_V2"
-sourceDir=./src
+
+sketch=$1
 
 function compile() {
-  sketch=$1
 
   arduino-cli \
     compile \
@@ -17,7 +17,5 @@ function compile() {
     $sketch
 }
 
-for sketch in `ls $sourceDir`; do
-  echo "Compiling $sourceDir/$sketch..."
-  compile "$sourceDir/$sketch"
-done
+echo "Compiling $sketch..."
+compile "$sketch"

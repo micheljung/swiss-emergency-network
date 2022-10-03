@@ -6,4 +6,4 @@ docker run \
   -v $(pwd)/lib:/root/Arduino/libraries \
   --entrypoint bash \
   arduino-cli \
-  /work/.ci/compile.sh
+  /work/.ci/compile.sh $1

@@ -7,7 +7,7 @@ env:
   SKETCHES_REPORTS_PATH: sketches-reports
   SKETCHES_REPORTS_ARTIFACT_NAME: sketches-reports
 jobs:
-  compile:
+  mama:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -19,47 +19,35 @@ jobs:
           submodules: recursive
 
       - name: Compile
-        run: ./.ci/build.sh
+        run: ./.ci/build.sh ./src/MamaDuck
         shell: sh
 
-      - uses: arduino/compile-sketches@v1
-        # Temporarily disable
-        if: false
+      - name: Upload sketches report to workflow artifact
+        uses: actions/upload-artifact@v2
         with:
-          cli-version: 0.27.1
-          fqbn: ${{ matrix.fqbn }}
-          platforms: |
-            - name: "Heltec-esp32:esp32"
-              version: "0.0.6"
-              source-url: https://resource.heltec.cn/download/package_heltec_esp32_index.json
-          enable-deltas-report: true
-          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
-          sketch-paths: |
-            - ./src
-          libraries: |
-            - source-url: https://github.com/Call-for-Code/ClusterDuck-Protocol.git
-            - name: radiolib@4.5.0
-            - source-path: ./lib/AXP202X_Library
-            - source-path: ./lib/Adafruit_BMP085_Unified
-            - source-path: ./lib/Adafruit_BMP280_Library
-            - source-path: ./lib/Adafruit_BusIO
-            - source-path: ./lib/Adafruit_Sensor
-            - source-path: ./lib/ArduinoJson
-            - source-path: ./lib/AsyncTCP
-            - source-path: ./lib/CRC32
-            - source-path: ./lib/Crypto
-            - source-path: ./lib/DHT-sensor-library
-            - source-path: ./lib/ESPAsyncTCP
-            - source-path: ./lib/ESPAsyncWebServer
-            - source-path: ./lib/FastLED
-            - source-path: ./lib/GP2YDustSensor
-            - source-path: ./lib/MQSensorsLib
-            - source-path: ./lib/RadioLib
-            - source-path: ./lib/TinyGPSPlus
-            - source-path: ./lib/U8g2_Arduino
-            - source-path: ./lib/arduino-timer
-            - source-path: ./lib/esp8266-oled-ssd1306
-            - source-path: ./lib/pubsubclient
+          name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
+          path: ${{ env.SKETCHES_REPORTS_PATH }}
+
+      - name: Upload bin
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./build/bin
+          if-no-files-found: error
+
+  papa:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fqbn:
+          - "Heltec-esp32:esp32:wifi_lora_32_V2"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Compile
+        run: ./.ci/build.sh ./src/PapaDuck
+        shell: sh
 
       - name: Upload sketches report to workflow artifact
         uses: actions/upload-artifact@v2
@@ -75,7 +63,7 @@ jobs:
 
   # When using a matrix to compile for multiple boards, it's necessary to use a separate job for the deltas report
   report:
-    needs: compile  # Wait for the compile job to finish to get the data for the report
+    needs: [mama, papa]  # Wait for the compile job to finish to get the data for the report
     if: github.event_name == 'pull_request' # Only run the job when the workflow is triggered by a pull request
     runs-on: ubuntu-latest
     steps:
