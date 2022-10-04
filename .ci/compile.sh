@@ -6,6 +6,8 @@ fqbn=$2
 function compile() {
   local sketch=$1
   local fqbn=$2
+  local sketchName=$(basename $sketch)
+  local targetDir=/work/build/${sketchName}
 
   arduino-cli \
     compile \
@@ -14,7 +16,7 @@ function compile() {
     --build-path /work/build/tmp \
     --build-cache-path /work/build/cache \
     --export-binaries \
-    --output-dir /work/build/bin \
+    --output-dir "${targetDir}" \
     "$sketch"
 }
 
