@@ -7,7 +7,7 @@ function compile() {
   local sketch=$1
   local fqbn=$2
   local sketchName=$(basename $sketch)
-  local targetDir=/work/build/${sketchName}
+  local targetDir=/work/build/bin/${sketchName}
 
   arduino-cli \
     compile \

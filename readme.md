@@ -20,9 +20,9 @@
 1. Download the arduino-cli for your system
 2. Execute (Linux example):
    ```shell
-   ./arduino-cli upload src/MamaDuck --input-dir build/MamaDuck --fqbn "Heltec-esp32:esp32:wifi_lora_32_V2" --port /dev/ttyACM2
+   ./arduino-cli upload src/MamaDuck --input-dir build/bin/MamaDuck --fqbn "Heltec-esp32:esp32:wifi_lora_32_V2" --port /dev/ttyACM2
    ```
    Windows example:
    ```shell
-   .\arduino-cli.exe upload src\MamaDuck --input-dir build\MamaDuck --fqbn "Heltec-esp32:esp32:wifi_lora_32_V2" --port COM3
+   .\arduino-cli.exe upload src\MamaDuck --input-dir build\bin\MamaDuck --fqbn "Heltec-esp32:esp32:wifi_lora_32_V2" --port COM3
    ```
