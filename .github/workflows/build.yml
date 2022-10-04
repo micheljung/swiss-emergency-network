@@ -7,19 +7,22 @@ env:
   SKETCHES_REPORTS_PATH: sketches-reports
   SKETCHES_REPORTS_ARTIFACT_NAME: sketches-reports
 jobs:
-  mama:
+  compile:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         fqbn:
           - "Heltec-esp32:esp32:wifi_lora_32_V2"
+        sketch:
+          - ./src/MamaDuck
+          - ./src/PapaDuck
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
 
       - name: Compile
-        run: ./.ci/build.sh ./src/MamaDuck
+        run: ./.ci/build.sh "${{ matrix.sketch }}" "${{ matrix.fqbn }}"
         shell: sh
 
       - name: Upload sketches report to workflow artifact
@@ -34,40 +37,11 @@ jobs:
           path: ./build/bin
           if-no-files-found: error
 
-  papa:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        fqbn:
-          - "Heltec-esp32:esp32:wifi_lora_32_V2"
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-
-      - name: Compile
-        run: ./.ci/build.sh ./src/PapaDuck
-        shell: sh
-
-      - name: Upload sketches report to workflow artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
-          path: ${{ env.SKETCHES_REPORTS_PATH }}
-
-      - name: Upload bin
-        uses: actions/upload-artifact@v3
-        with:
-          path: ./build/bin
-          if-no-files-found: error
-
-  # When using a matrix to compile for multiple boards, it's necessary to use a separate job for the deltas report
   report:
-    needs: [mama, papa]  # Wait for the compile job to finish to get the data for the report
-    if: github.event_name == 'pull_request' # Only run the job when the workflow is triggered by a pull request
+    needs: [compile]
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      # This step is needed to get the size data produced by the compile jobs
       - name: Download sketches reports artifact
         uses: actions/download-artifact@v2
         with:

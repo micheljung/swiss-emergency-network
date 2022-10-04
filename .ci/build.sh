@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
+
+sketch=$1
+fqbn=$2
+
 docker build -t arduino-cli .
 docker run \
   --rm \
@@ -6,4 +10,4 @@ docker run \
   -v $(pwd)/lib:/root/Arduino/libraries \
   --entrypoint bash \
   arduino-cli \
-  /work/.ci/compile.sh $1
+  /work/.ci/compile.sh "$sketch" "$fqbn"

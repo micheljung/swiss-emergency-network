@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-fqbn="Heltec-esp32:esp32:wifi_lora_32_V2"
-
 sketch=$1
+fqbn=$2
 
 function compile() {
+  local sketch=$1
+  local fqbn=$2
 
   arduino-cli \
     compile \
@@ -14,8 +15,8 @@ function compile() {
     --build-cache-path /work/build/cache \
     --export-binaries \
     --output-dir /work/build/bin \
-    $sketch
+    "$sketch"
 }
 
-echo "Compiling $sketch..."
-compile "$sketch"
+echo "Compiling $sketch for $fqbn..."
+compile "$sketch" "$fqbn"
