@@ -55,7 +55,7 @@ void setup() {
   // initialize the LoRa radio with specific settings. This will overwrites settings defined in the CDP config file cdpcfg.h
   duck.setupRadio(LORA_FREQ, LORA_CS_PIN, LORA_RST_PIN, LORA_DIO0_PIN, LORA_DIO1_PIN, LORA_TXPOWER);
   // initialize the wifi access point with a custom AP name
-  duck.setupWifi();
+  duck.setupWifi("🆘 Swiss Emergency Network");
   // initialize DNS
   duck.setupDns();
   // initialize web server, enabling the captive portal and pass in a Custom Captive portal from emergencyPortal.h
