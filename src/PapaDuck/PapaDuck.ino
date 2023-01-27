@@ -44,6 +44,9 @@ const int WIFI_CONNECTION_DELAY_MS = 500;
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
 
+// Create a Display Instance
+DuckDisplay* display = NULL;
+
 void setup() {
  std::string deviceId("PAPADUCK");
   std::vector<byte> devId;
@@ -56,6 +59,9 @@ void setup() {
                   LORA_DIO1_PIN, LORA_TXPOWER);
   duck.setDeviceId(devId);
 
+  display = DuckDisplay::getInstance();
+  display->setupDisplay(duck.getType(), devId);
+  display->showDefaultScreen();
 
   duck.onReceiveDuckData(handleDuckData);
   setup_wifi();
